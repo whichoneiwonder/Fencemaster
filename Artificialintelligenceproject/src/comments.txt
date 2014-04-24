@@ -1,0 +1,154 @@
+Artificial Intelligence (COMP30024) 
+Semester 1 2014
+Project part A
+
+Authors:
+========
+Name   James McMahon	
+ID     513250
+login  jmcma
+
+Name   Avnish Jain
+ID     607518
+login  avnishj
+______________________
+
+
+Notes:
+======
+Guide to our indexing of each of the six sides of the board and each tile:
+Each side is indexed starting at the top or top left, increasing clockwise.
+
+Board Edges:
+  0
+5/ \1
+4\_/2
+  3  
+Cell links/Board Corners
+ 0/ \1
+5|   |2
+ 4\ /3
+ 
+ 
+Class Structure:
+===============
+Driver Class: Game
+	which has a (static) GameBoard
+		which has an array of Cells
+			of which there are two special types:
+				Corner and Edge
+
+Most logic is contained within the GameBoard class, calling short methods in
+the Cell classes or evaluating the board-state as a whole.
+The GameBoard class is static for this part of the assignment, but will
+likely need to be refactored to allow the game to handle multiple board states.
+
+  
+Pseudocode:
+===========
+
+checkTripod(Colour)
+	for each Edge-Cell:
+	|
+	|	if current Cell is correct colour
+	|	|
+	|	|	mark current Cell as visited
+	|	|	mark current edge number as visited
+	|	|	expand current Cell 
+	|	|	 ->add all non-visited surrounding Cells 
+	|	|	 	of the correct colour to front of the queue
+	|	|	
+	|	|	while there are objects in the queue
+	|	|	|	expand top cell in queue
+	|	|	|	mark cell as visited
+	|	|	|	
+	|	|	|	if this is an edge
+	|	|	|	|	if it is a non-visited edge
+	|	|	|	|	|	if this is the third edge
+	|	|	|	|	|	|	return true
+	|	|	|	|	|	else
+	|	|	|	|	|	|	mark edge as visited
+	|	|	|	|	|	end 
+	|	|	|	|	end 
+	|	|	|	end 
+	|	|	|	
+	|	|	|	->add all non-visited surrounding Cells 
+	|	|	|		of the correct colour to front of the queue
+	|	|	end
+	|	end 
+	end 
+	
+	return false
+end
+
+
+checkLoop(Colour)
+	#looking for cells in the centre of a loop
+	for each non-edge Cell:
+	|
+	|	if current Cell is not 'Colour'
+	|	|
+	|	|	mark current Cell as visited
+	|	|	mark current edge number as visited
+	|	|	expand current Cell 
+	|	|	 ->add all non-visited surrounding Cells 
+	|	|	 	that are not 'colour' to front of the queue
+	|	|	
+	|	|	while there are objects in the queue
+	|	|	|	expand top cell in queue
+	|	|	|	
+	|	|	|	->add all non-visited surrounding Cells 
+	|	|	|		that are not 'colour' to front of the queue
+	|	|	|	mark cell as visited
+	|	|	|	
+	|	|	|	if this is an edge or Corner or "not in a loop"
+	|	|	|	|	mark current queue and visited list as  "not in a loop"
+	|	|	|	|	empty queue and visited list
+	|	|	|	|	
+	|	|	|	else if queue is empty and no edge reached
+	|	|	|	|	
+	|	|	|	|	return true
+	|	|	|	|	
+	|	|	|	end
+	|	|	|	
+	|	|	|	
+	|	|	|	
+	|	|	end
+	|	end 
+	end 
+	
+	return false
+	
+end
+		
+
+
+Algorithm Explanation/Time Complexity
+=====================================
+Board Creation:
+	if you define n as the dimension of the board,
+	then because our code uses a square array of (size (2*n -2)^2
+	to store the board, it runs at O(n^2) time to read in
+	the input and store the board in memory
+	
+Win Checking:
+	Our code performs many searches to see if the board is in a final state
+	
+	To check for tripods our program starts a search from each edge piece
+	to try and reach two other edges, using Depth-First Search. This together is
+	O(n*b^m) where n is the dimension of the board and b as <=6 (hexagons)
+	in the worst case, m (maximum depth) could be very large, 
+	but this is very unlikely given the finite size of the search	space,
+	and the "blocking" aspect of the game
+	
+	To check for loops our program goes through each non-edge piece and looks for
+	a path to an edge piece that does not cross any of a given player's pieces
+	if and edge (or a corner) can't be reached then the cell we started in must
+	be surrounded by a loop. 
+	This also uses DFS, except it is applied to all the cells, not just the edges,
+	because of this it runs in O(n^2 * b^m) time in the worst case
+		
+	In both searches we did use some optimization at the cost of memory space by 
+	keeping a list of all nodes that were passed previously in order to avoid 
+	search looping and as a kind of shortcut, preventing the searches from 
+	going too deep.
