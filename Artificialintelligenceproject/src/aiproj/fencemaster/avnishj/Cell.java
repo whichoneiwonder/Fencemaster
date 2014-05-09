@@ -5,18 +5,18 @@ package aiproj.fencemaster.avnishj;
  */
 public class Cell {
 	//Row Position on Board
-	private int row;
+	protected int row;
 	
 	//Column Position on Board
-	private int col;
+	protected int col;
 	
 	//Array of Cells this cell is connected to
-	private Cell [] links = new Cell[6];
+	protected Cell [] links = new Cell[6];
 	
 	//State of the Cell
-	private String state;
+	protected String state;
 	
-	private GameBoard parentBoard;
+	protected GameBoard parentBoard;
 
 	/** Constructor which sets the location and state
 	 *  of the cell based on the inputs
@@ -27,8 +27,8 @@ public class Cell {
 	 * @param parentBoard TODO
 	 */
 	public Cell(int x, int y, String state, GameBoard parentBoard){
-		setXpos(x);
-		setYpos(y);
+		setRow(x);
+		setCol(y);
 		setState(state);
 		setParentBoard(parentBoard);
 	}
@@ -54,30 +54,30 @@ public class Cell {
 
 
 	/**
-	 * @return the xpos
+	 * @return the row
 	 */
-	protected int getXpos() {
+	protected int getRow() {
 		return row;
 	}
 
 	/**
-	 * @param xpos the xpos to set
+	 * @param xpos the row to set
 	 */
-	protected void setXpos(int xpos) {
+	protected void setRow(int xpos) {
 		row = xpos;
 	}
 
 	/**
-	 * @return the ypos
+	 * @return the col
 	 */
-	protected int getYpos() {
+	protected int getCol() {
 		return col;
 	}
 
 	/**
-	 * @param ypos the ypos to set
+	 * @param ypos the col to set
 	 */
-	protected void setYpos(int ypos) {
+	protected void setCol(int ypos) {
 		col = ypos;
 	}
 
@@ -135,6 +135,25 @@ public class Cell {
 		links[3] = parentBoard.getCell(row+1, col+1);
 		links[4] = parentBoard.getCell(row+1, col  );
 		links[5] = parentBoard.getCell(row  , col-1);
+	}
+	
+	public int getDistanceToEdge(int edgeNum){
+		switch(edgeNum){
+			case 0:
+				return this.row;
+			case 1:
+				return parentBoard.getDimension() - 1 + this.row - this.col;
+			case 2:
+				return (2*parentBoard.getDimension() - 2) - this.col;
+			case 3:
+				return (2*parentBoard.getDimension() - 2) - this.row;
+			case 4:
+				return (parentBoard.getDimension() - 1) + this.col - this.row;
+			case 5:
+				return this.col;
+		}
+		return 0;
+		
 	}
 	
 	

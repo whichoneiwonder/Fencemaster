@@ -265,7 +265,7 @@ public class GameBoard {
 	protected void printEdgeList(){
 		System.out.println("There are " + edgeList.size() + " edges");
 		for (int i = 0; i < edgeList.size(); i++){
-			System.out.println("(" + edgeList.get(i).getXpos() + ", " + edgeList.get(i).getYpos() + ")");
+			System.out.println("(" + edgeList.get(i).getRow() + ", " + edgeList.get(i).getCol() + ")");
 		}
 	}
 	/** Used for Debugging Purposes
@@ -280,7 +280,7 @@ public class GameBoard {
 				System.out.println("Connection " + i + ": Null");
 			}
 			else{
-				System.out.println("Connection " + i + ": ("+o[i].getXpos() + ", " + o[i].getYpos() + ")");
+				System.out.println("Connection " + i + ": ("+o[i].getRow() + ", " + o[i].getCol() + ")");
 			}
 		}
 	}

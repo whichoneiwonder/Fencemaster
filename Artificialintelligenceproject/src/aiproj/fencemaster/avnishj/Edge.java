@@ -48,5 +48,32 @@ public class Edge extends Cell {
 		return "Edge";
 	}
 	
+	/**
+	 * @return the minimum steps to an edge
+	 */
+	@Override
+	public int getDistanceToEdge(int edgeNum){
+		int addition = 0;
+		if((edgeNum + 5)%6 == this.edgeNum || (edgeNum + 1)%6 == this.edgeNum){
+			addition = 1;
+		}
+		int returnValue=0; 
+		switch(edgeNum){
+			case 0:
+				returnValue = this.getRow();
+			case 1:
+				returnValue = parentBoard.getDimension() - 1 + this.getRow() - this.getCol();
+			case 2:
+				returnValue = (2*parentBoard.getDimension() - 2) - this.getCol();
+			case 3:
+				returnValue = (2*parentBoard.getDimension() - 2) - this.getRow();
+			case 4:
+				returnValue = (parentBoard.getDimension() - 1) + this.getCol() - this.getRow();
+			case 5:
+				returnValue = this.col;
+		}
+		return returnValue + addition;
+		
+	}
 	
 }
