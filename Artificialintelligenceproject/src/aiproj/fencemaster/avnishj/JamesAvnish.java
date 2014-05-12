@@ -145,12 +145,20 @@ public int getWinner() {
 		nextMove.P = this.playerNum;
 		
 		while(true){
-			row = randNum.nextInt();
-			col = randNum.nextInt();
+			row = randNum.nextInt(2* currentBoard.getDimension()-1);
+			col = randNum.nextInt(2* currentBoard.getDimension()-1) ;
+			
+			if(DEBUG){
+				System.out.println("Player" + playerNum +
+						" trying row " + row + " and col " + col);
+			}
+			
 			if((target =currentBoard.getCell(row, col)) != null ){
 				if (target.getState() == EMPTY){
 					nextMove.Col=col;
 					nextMove.Row = row;
+					//REMEMBER TO CHANGE OUR BOARD STATE
+					currentBoard.setCellState(row, col, playerNum);
 					return nextMove;
 				}
 			}

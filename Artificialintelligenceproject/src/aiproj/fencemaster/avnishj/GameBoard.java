@@ -312,7 +312,8 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		
 		for(int row = 0; row < 2*getDimension()-1; row++){
 			for(int col = 0 ; col < 2*getDimension() -1; col++){
-				if(this.getCell(row, col).getState() == 0){
+				if(this.getCell(row, col) != null &&
+						this.getCell(row, col).getState() == 0){
 					return true;
 				}	
 			}
