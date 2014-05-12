@@ -137,8 +137,8 @@ public class Cell {
 		links[5] = parentBoard.getCell(row  , col-1);
 	}
 	
-	public int getDistanceToEdge(int edgeNum){
-		switch(edgeNum){
+	public int getDistanceToEdge(int edgeN){
+		switch(edgeN){
 			case 0:
 				return this.row;
 			case 1:
