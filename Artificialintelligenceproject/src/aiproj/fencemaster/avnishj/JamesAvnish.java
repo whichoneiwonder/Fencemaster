@@ -7,7 +7,9 @@ import aiproj.fencemaster.Piece;
 import aiproj.fencemaster.Player;
 
 public class JamesAvnish implements Player, Piece {
-
+	
+	
+	
 	@Override
 	public int getWinner() {
 		// TODO Auto-generated method stub

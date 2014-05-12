@@ -10,6 +10,8 @@ import java.io.PrintStream;
  *   @author msalehi
  */
 public interface Player{
+	
+	
 	/* This function when called by referee should return the winner
 	 *  
 	 */
