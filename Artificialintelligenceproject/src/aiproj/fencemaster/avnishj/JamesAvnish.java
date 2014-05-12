@@ -1,6 +1,6 @@
 package aiproj.fencemaster.avnishj;
 
-import aiproj.fencemaster.avnishj.*;
+ 
 
 import java.io.PrintStream;
 
@@ -48,7 +48,7 @@ public class JamesAvnish implements Player, Piece {
 
 	@Override
 	public void printBoard(PrintStream output) {
-		// TODO Auto-generated method stub
+		currentBoard.printBoard(output);
 
 	}
 

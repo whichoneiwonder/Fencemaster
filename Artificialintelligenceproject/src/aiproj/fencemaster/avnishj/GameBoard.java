@@ -1,4 +1,5 @@
 package aiproj.fencemaster.avnishj;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 /** Main class for the GameBoard
@@ -212,6 +213,17 @@ public class GameBoard {
 					System.out.print("null\t");
 			}
 			System.out.println();
+		}
+	}
+	protected void printBoard(PrintStream output){
+		output.print(dimension + "\n");
+		for (int row = 0; row < board.length; row++){
+			for (int col = 0; col < board[0].length; col++){
+				if (board [row] [col] != null)
+					output.print(board [row] [col].getState() + " ");
+				
+			}
+			output.print("\n");
 		}
 	}
 	
