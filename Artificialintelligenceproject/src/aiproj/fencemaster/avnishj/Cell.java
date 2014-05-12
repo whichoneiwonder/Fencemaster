@@ -3,7 +3,7 @@ package aiproj.fencemaster.avnishj;
 /** Super class for cells, which has attributes and
  * methods for a Center type cell
  */
-public class Cell {
+public class Cell implements aiproj.fencemaster.Piece{
 	//Row Position on Board
 	protected int row;
 	
@@ -15,6 +15,9 @@ public class Cell {
 	
 	//State of the Cell
 	protected String state;
+	
+	//
+	
 	
 	protected GameBoard parentBoard;
 
@@ -33,6 +36,7 @@ public class Cell {
 		setParentBoard(parentBoard);
 	}
 	
+
 	
 	
 	/**
