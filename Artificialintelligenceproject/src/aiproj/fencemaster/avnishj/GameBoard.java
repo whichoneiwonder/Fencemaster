@@ -215,8 +215,20 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		}
 	}
 	protected void printBoard(PrintStream output){
-		output.print(dimension + "\n");
+		
+		int spaces=0;
 		for (int row = 0; row < board.length; row++){
+			if( row < getDimension() ){
+				spaces = getDimension()-1 -row;
+			}
+			else if (row >= getDimension()){
+				spaces = row - getDimension()+1 ;
+			}
+			while(spaces > 0){
+				System.out.print(' ');
+				spaces--;
+			}
+			
 			for (int col = 0; col < board[0].length; col++){
 				if (board [row] [col] != null)
 					output.print(board [row] [col].getState() + " ");
