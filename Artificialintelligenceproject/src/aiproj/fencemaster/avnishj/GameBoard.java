@@ -238,12 +238,13 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		board[x][y].setState(state);
 	}
 	protected void setCellState(int x, int y, String state){
-		switch (state){
-			case "W":
+		if(state.equals("W")){
 				board[x][y].setState(WHITE);
-		
-			case "B":
-		}
+		} else if(state.equals("B")){
+			board[x][y].setState(BLACK);
+		} else if(state.equals("-")){
+			board[x][y].setState(EMPTY);
+		} 
 		
 		
 		

@@ -1,7 +1,7 @@
 package aiproj.fencemaster.avnishj;
 
  
-
+import java.util.Random;
 import java.io.PrintStream;
 
 import aiproj.fencemaster.Move;
@@ -16,6 +16,7 @@ public class JamesAvnish implements Player, Piece {
 	protected int playerNum;
 	protected int turnNum;
 	
+	Random randNum = new Random();
 	
 	@Override
 public int getWinner() {
@@ -134,8 +135,26 @@ public int getWinner() {
 
 	@Override
 	public Move makeMove() {
-		// TODO Auto-generated method stub
-		return null;
+		int row, col;
+		Move nextMove = new Move();
+		Cell target;
+		
+		//random move generator
+		
+		nextMove.IsSwap = false;
+		nextMove.P = this.playerNum;
+		
+		while(true){
+			row = randNum.nextInt();
+			col = randNum.nextInt();
+			if((target =currentBoard.getCell(row, col)) != null ){
+				if (target.getState() == EMPTY){
+					nextMove.Col=col;
+					nextMove.Row = row;
+					return nextMove;
+				}
+			}
+		}
 	}
 
 	@Override
