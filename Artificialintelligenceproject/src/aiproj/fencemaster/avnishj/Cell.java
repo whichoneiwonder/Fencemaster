@@ -14,7 +14,7 @@ public class Cell implements aiproj.fencemaster.Piece{
 	protected Cell [] links = new Cell[6];
 	
 	//State of the Cell
-	protected String state;
+	protected int state;
 	
 	//
 	
@@ -29,7 +29,7 @@ public class Cell implements aiproj.fencemaster.Piece{
 	 * @param state = String value of what state Cell is in
 	 * @param parentBoard TODO
 	 */
-	public Cell(int x, int y, String state, GameBoard parentBoard){
+	public Cell(int x, int y, int state, GameBoard parentBoard){
 		setRow(x);
 		setCol(y);
 		setState(state);
@@ -109,14 +109,14 @@ public class Cell implements aiproj.fencemaster.Piece{
 	/**
 	 * @return the state
 	 */
-	protected String getState() {
+	protected int getState() {
 		return state;
 	}
 
 	/**
 	 * @param state the state to set
 	 */
-	protected void setState(String state) {
+	protected void setState(int state) {
 		this.state = state;
 	}
 	/**

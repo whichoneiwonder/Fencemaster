@@ -2,7 +2,7 @@ package aiproj.fencemaster.avnishj;
 import java.util.Scanner;
 /** Main class for the Game
  */
-public class Game {
+public class Game implements aiproj.fencemaster.Piece {
 	
 	private static boolean DEBUG = false;
 	
@@ -41,8 +41,14 @@ public class Game {
 					}
 					//Set state according to input
 					String nextState = boardStateScanner.next();
-					if (nextState.equals("-") || nextState.equals("B") || nextState.equals("W")){
-						board.setCellState(row, col, nextState);
+					if (nextState.equals("-") ){
+						board.setCellState(row, col, EMPTY);
+					}
+					else if (nextState.equals("B")){
+						board.setCellState(row, col, BLACK);
+					} 
+					else if (nextState.equals("W")){
+						board.setCellState(row, col, WHITE);
 					}
 					else{
 						System.err.println("Wrong Input: " + nextState);
@@ -64,25 +70,25 @@ public class Game {
 			board.printBoard();
 		
 		//Checks if Black has won by a tripod
-		if(board.checkTripod("B")){
+		if(board.checkTripod(BLACK)){
 			blackWins = true;
 			tripod = true;
 		}
 		
 		//Checks if White has won by a tripod
-		if(board.checkTripod("W")){
+		if(board.checkTripod(WHITE)){
 			whiteWins = true;
 			tripod = true;
 		}
 		
 		//Checks if Black has won by a Loop
-		if(board.checkLoop("B")){
+		if(board.checkLoop(BLACK)){
 			blackWins = true;
 			loop = true;
 		}
 		
 		//Checks if White has won by a loop
-		if(board.checkLoop("W")){
+		if(board.checkLoop(WHITE)){
 			whiteWins = true;
 			loop = true;
 		}

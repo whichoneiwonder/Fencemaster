@@ -4,13 +4,12 @@ import java.util.ArrayList;
 
 /** Main class for the GameBoard
  */
-public class GameBoard {
+public class GameBoard implements aiproj.fencemaster.Piece{
 	
 	private int dimension;
 	
 	//Board implementation as a 2-D Array
 	protected Cell [][] board;
-	public static final String DEFAULT_STATE = "-";
 	protected ArrayList<Edge> edgeList;
 	
 	
@@ -58,12 +57,12 @@ public class GameBoard {
 						//cornerNum is used to assist the GameBoard in creating links
 						//so it knows which indices to set to null as connections
 						if (col == 0 || col == counter - 1){
-							board[row][col] = new Corner(row, col, DEFAULT_STATE, this, cornerNum);
+							board[row][col] = new Corner(row, col, EMPTY, this, cornerNum);
 							cornerNum++;
 						}
 						//Creates the rest of the edge pieces in the first row
 						else{
-							board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 0);
+							board[row][col] = new Edge(row, col, EMPTY, this, 0);
 						}
 					}
 				}// end first row
@@ -80,15 +79,15 @@ public class GameBoard {
 					else{
 						//First entry in the row is an edge piece
 						if (col == 0){
-							board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 5);
+							board[row][col] = new Edge(row, col, EMPTY, this, 5);
 						}
 						//Last valid entry in the row is an edge piece
 						else if (col == counter - 1){
-							board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 1);
+							board[row][col] = new Edge(row, col, EMPTY, this, 1);
 						}
 						//Rest are generic Center Cell objects
 						else{
-							board[row][col] = new Cell(row, col, DEFAULT_STATE, this);
+							board[row][col] = new Cell(row, col, EMPTY, this);
 						}
 					}
 					
@@ -105,12 +104,12 @@ public class GameBoard {
 	protected void createMiddle(){
 		int row = getDimension() - 1;
 		//Starts and Ends the Row with 2 Corner Cells as it is the longest row
-		board [row] [0] = new Corner(row, 0, DEFAULT_STATE, this, 5);
-		board [row] [2*getDimension() - 2] = new Corner(row, 2*getDimension() - 2, DEFAULT_STATE, this, 2);
+		board [row] [0] = new Corner(row, 0, EMPTY, this, 5);
+		board [row] [2*getDimension() - 2] = new Corner(row, 2*getDimension() - 2, EMPTY, this, 2);
 		
 		//Rest are initialised as Center Cells
 		for (int col = 1; col < 2*getDimension() - 2; col++){
-			board [row] [col] = new Cell(row, col, DEFAULT_STATE, this);
+			board [row] [col] = new Cell(row, col, EMPTY, this);
 		}
 	}
 	
@@ -134,15 +133,15 @@ public class GameBoard {
 				else{
 					//Last entry in the board row is an edge piece
 					if (col == 2*getDimension()-2){
-						board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 2);
+						board[row][col] = new Edge(row, col, EMPTY, this, 2);
 					}
 					//First entry of the row in the board is an edge piece
 					else if (col == nullCounter){
-						board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 4);
+						board[row][col] = new Edge(row, col, EMPTY, this, 4);
 					}
 					//Everything else is a generic Cell
 					else{
-						board[row][col] = new Cell(row, col, DEFAULT_STATE, this);
+						board[row][col] = new Cell(row, col, EMPTY, this);
 					}
 				}//end inner else	
 			}//end inner for loop
@@ -158,15 +157,15 @@ public class GameBoard {
 			}
 			//First entry in the board is an Corner piece
 			else if (col == getDimension()-1){
-				board[row][col] = new Corner(row, col, DEFAULT_STATE, this, 4);
+				board[row][col] = new Corner(row, col, EMPTY, this, 4);
 			}
 			//Last entry in the board is an Corner piece
 			else if (col == 2*getDimension() -2){
-				board[row][col] = new Corner(row, col, DEFAULT_STATE, this, 3);
+				board[row][col] = new Corner(row, col, EMPTY, this, 3);
 			}
 			//Everything else is an Edge Piece
 			else{
-				board[row][col] = new Edge(row, col, DEFAULT_STATE, this, 3);
+				board[row][col] = new Edge(row, col, EMPTY, this, 3);
 			}
 				
 		}
@@ -235,8 +234,19 @@ public class GameBoard {
 	 *  @param state = String value of what state Cell is in
 	 *  
 	 **/  
-	protected void setCellState(int x, int y, String state){
+	protected void setCellState(int x, int y, int state){
 		board[x][y].setState(state);
+	}
+	protected void setCellState(int x, int y, String state){
+		switch (state){
+			case "W":
+				board[x][y].setState(WHITE);
+		
+			case "B":
+		}
+		
+		
+		
 	}
 
 	/**
@@ -301,7 +311,7 @@ public class GameBoard {
 		
 		for(int row = 0; row < 2*getDimension()-1; row++){
 			for(int col = 0 ; col < 2*getDimension() -1; col++){
-				if(this.getCell(row, col).getState().equals("-")){
+				if(this.getCell(row, col).getState() == 0){
 					return true;
 				}	
 			}
@@ -320,7 +330,7 @@ public class GameBoard {
 	 * 					win state for that colour
 	 * @return true if tripod exists, false if not
 	 */
-	protected boolean checkTripod(String colour){
+	protected boolean checkTripod(int colour){
 		Cell current;
 		
 		//Stack Abstract Data Structure as an ArrayList
@@ -342,7 +352,7 @@ public class GameBoard {
 			
 			//If the edge piece is of the right colour, add it to visitedNodes
 			//else, as the queue is initially empty, move to the next edge piece
-			if (current.getState().equals(colour)){
+			if (current.getState() ==(colour)){
 				visitedNodes.add(current);
 				//Adds the search point of the edge to the foundEdge list
 				//Now proceeds to find the other 2 unique edges
@@ -356,7 +366,7 @@ public class GameBoard {
 					//that has not been visited before or is not part of the queue
 					//add it to the queue
 					if (current.getAllLinks()[j] != null 
-							&& current.getAllLinks()[j].getState().equals(colour)
+							&& current.getAllLinks()[j].getState() == colour
 							&& !visitedNodes.contains(current.getAllLinks()[j])
 							&& !queue.contains(current.getAllLinks()[j])) {
 
@@ -390,7 +400,7 @@ public class GameBoard {
 						//for each adjacent cell, if it's not null, not the right color 
 						//and not  already visited, then add it to the queue
 						if (current.getAllLinks()[j] != null 
-								&& current.getAllLinks()[j].getState().equals(colour)
+								&& current.getAllLinks()[j].getState() == (colour)
 								&& !visitedNodes.contains(current.getAllLinks()[j])
 								&& !queue.contains(current.getAllLinks()[j])) {
 							// add to the front of the queue
@@ -414,7 +424,7 @@ public class GameBoard {
 	 * 					win state for that colour
 	 * @return true if loop exists, false if not
 	 */
-	protected boolean checkLoop(String colour){
+	protected boolean checkLoop(int colour){
 		
 		//Stack Abstract Data Structure as an ArrayList
 		ArrayList<Cell> queue = new ArrayList<Cell>();
@@ -439,7 +449,7 @@ public class GameBoard {
 				//searching from here
 				if(current !=null
 						&& current.toString().equals("Center")
-						&& !current.getState().equals(colour)
+						&& !(current.getState() == colour )
 						&& !canReachEdge.contains(current)
 						&& !visitedNodes.contains(current)){
 					//ie: not a corner or edge
@@ -452,7 +462,7 @@ public class GameBoard {
 						next = current.getLink(i);
 						
 						//If the cell is of the opposite colour
-						if (!next.getState().equals(colour)){
+						if (!(next.getState() == colour)){
 							
 							//If the cell is an edge or a corner or is in canReachEdge
 							//the searching piece is not enclosed within a boundary
@@ -490,7 +500,7 @@ public class GameBoard {
 							next = current.getLink(i);
 							
 							//the Cell is of the opposite colour
-							if (!next.getState().equals(colour)){
+							if (!(next.getState() == colour)){
 								
 								//If the cell is an edge or a corner or is in canReachEdge
 								//the searching piece is not enclosed within a boundary

@@ -16,7 +16,7 @@ public class Corner extends Cell {
 	 * @param edgeNum = edgeNumber of the board
 	 *  			
 	 */
-	public Corner(int x, int y, String state, GameBoard parentBoard, int cornerNumber){
+	public Corner(int x, int y, int state, GameBoard parentBoard, int cornerNumber){
 		super(x, y, state, parentBoard);
 		
 		/*As Cell is a corner piece, 3 of its edges will be

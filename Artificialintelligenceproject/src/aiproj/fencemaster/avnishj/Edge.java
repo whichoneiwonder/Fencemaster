@@ -17,7 +17,7 @@ public class Edge extends Cell {
 	 * @param edgeNum = edgeNumber of the board
 	 *  			
 	 */
-	public Edge(int x, int y, String state, GameBoard parentBoard, int edgeNum){
+	public Edge(int x, int y, int state, GameBoard parentBoard, int edgeNum){
 		super( x, y, state, parentBoard);
 		setEdgeNum(edgeNum);
 		
