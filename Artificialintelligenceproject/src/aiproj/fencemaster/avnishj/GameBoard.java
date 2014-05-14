@@ -2,6 +2,8 @@ package aiproj.fencemaster.avnishj;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import aiproj.fencemaster.Move;
+
 /** Main class for the GameBoard
  */
 public class GameBoard implements aiproj.fencemaster.Piece{
@@ -11,7 +13,8 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	//Board implementation as a 2-D Array
 	protected Cell [][] board;
 	protected ArrayList<Edge> edgeList;
-	
+	protected ArrayList<ArrayList<Cell>> cellList;
+	protected ArrayList<ArrayList<Cell>> borderCellList;
 	
 	/** Constructor which creates the GameBoard given the dimension n
 	 *  
@@ -19,6 +22,13 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	 *  			
 	 */
 	public GameBoard(int n){
+		cellList = new ArrayList<ArrayList<Cell>>(3);
+		borderCellList = new ArrayList<ArrayList<Cell>>(3);
+		for(int i =0; i < 3; i++){
+			cellList.add(i, new ArrayList<Cell>());
+			borderCellList.add(i, new ArrayList<Cell>());
+		}
+		
 		setDimension(n);
 		board = new Cell [2*getDimension() - 1] [2*getDimension() - 1];
 		//Static ArrayList that assists with Tripod Searching
@@ -557,6 +567,44 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		
 		return false;
 	}
+	/**
+	 * 
+	 * @param mv the move to be added to the board
+	 */
+	protected void addMoveToBoard(Move mv){
+		setCellState(mv.Row, mv.Col, mv.P);
+		cellList.get(EMPTY).remove(getCell(mv.Row, mv.Col));
+		borderCellList.get(WHITE).remove(getCell(mv.Row, mv.Col));
+		borderCellList.get(BLACK).remove(getCell(mv.Row, mv.Col));
+		cellList.get(mv.P).add(getCell(mv.Row, mv.Col));
+		
+		//expand the border space of the moving player
+		for(Cell space: getCell(mv.Row, mv.Col).getAllLinks()){
+			if( space !=null && space.state == EMPTY &&
+					!borderCellList.get(mv.P).contains(space)){
+				borderCellList.get(mv.P).add(space);
+			}
+		}
+		
+	}
+	
+	
+	
+	protected ArrayList<Cell> getCellList(int playerNum){
+		if(playerNum == EMPTY || playerNum == WHITE || playerNum == BLACK){
+			return cellList.get(playerNum);
+		}
+		
+		return null;
+	}
+	protected ArrayList<Cell> getBorderCellList(int playerNum){
+		if(playerNum == WHITE || playerNum == BLACK){
+			return borderCellList.get(playerNum);
+		}
+		
+		return null;
+	}
+	
 }
 
 

@@ -144,6 +144,17 @@ public int getWinner() {
 		nextMove.IsSwap = false;
 		nextMove.P = this.playerNum;
 		
+		
+		if(!currentBoard.getBorderCellList(playerNum).isEmpty() ){
+			target = currentBoard.getBorderCellList(playerNum).get(
+					randNum.nextInt(
+							currentBoard.getBorderCellList(playerNum).size()));
+			nextMove.Col = target.col;
+			nextMove.Row = target.row;
+			currentBoard.addMoveToBoard(nextMove);
+			return nextMove;
+		}
+		
 		while(true){
 			row = randNum.nextInt(2* currentBoard.getDimension()-1);
 			col = randNum.nextInt(2* currentBoard.getDimension()-1) ;
@@ -158,7 +169,7 @@ public int getWinner() {
 					nextMove.Col=col;
 					nextMove.Row = row;
 					//REMEMBER TO CHANGE OUR BOARD STATE
-					currentBoard.setCellState(row, col, playerNum);
+					currentBoard.addMoveToBoard(nextMove);
 					return nextMove;
 				}
 			}
@@ -194,7 +205,7 @@ public int getWinner() {
 			return INVALID;
 		}
 		//set the target cell as placed by the opponent 
-		currentBoard.getCell(m.Row, m.Col).setState(m.P);
+		currentBoard.addMoveToBoard(m);
 		opponentFirstMove = false;
 		return 0;
 	}
