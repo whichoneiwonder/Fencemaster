@@ -224,6 +224,7 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 			System.out.println();
 		}
 	}
+	
 	protected void printBoard(PrintStream output){
 		
 		int spaces=0;
@@ -259,6 +260,8 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	protected void setCellState(int x, int y, int state){
 		board[x][y].setState(state);
 	}
+	
+	
 	protected void setCellState(int x, int y, String state){
 		if(state.equals("W")){
 				board[x][y].setState(WHITE);
@@ -580,7 +583,7 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		
 		//expand the border space of the moving player
 		for(Cell space: getCell(mv.Row, mv.Col).getAllLinks()){
-			if( space !=null && space.state == EMPTY &&
+			if( space != null && space.state == EMPTY &&
 					!borderCellList.get(mv.P).contains(space)){
 				borderCellList.get(mv.P).add(space);
 			}
@@ -590,13 +593,14 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	
 	
 	
-	protected ArrayList<Cell> getCellList(int playerNum){
-		if(playerNum == EMPTY || playerNum == WHITE || playerNum == BLACK){
-			return cellList.get(playerNum);
+	protected ArrayList<Cell> getCellList(int player){
+		if(player == EMPTY || player == WHITE || player == BLACK){
+			return cellList.get(player);
 		}
 		
 		return null;
 	}
+	
 	protected ArrayList<Cell> getBorderCellList(int playerNum){
 		if(playerNum == WHITE || playerNum == BLACK){
 			return borderCellList.get(playerNum);
