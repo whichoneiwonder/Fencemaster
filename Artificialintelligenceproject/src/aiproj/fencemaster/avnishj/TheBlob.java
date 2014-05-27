@@ -8,7 +8,7 @@ import aiproj.fencemaster.Move;
 import aiproj.fencemaster.Piece;
 import aiproj.fencemaster.Player;
 
-public class JamesAvnish implements Player, Piece {
+public class TheBlob implements Player, Piece {
 	
 	private static final boolean DEBUG = false;
 	protected boolean opponentFirstMove = true;
@@ -16,7 +16,7 @@ public class JamesAvnish implements Player, Piece {
 	protected int playerNum;
 	protected int turnNum;
 	
-	
+	protected boolean edges[][];
 	
 	Random randNum = new Random();
 	
@@ -158,23 +158,19 @@ public int getWinner() {
 			
 			if (target==null){
 			target = currentBoard.getBorderCellList(playerNum).get(
-				randNum.nextInt(
-					currentBoard.getBorderCellList(playerNum).size()));
+					randNum.nextInt(
+							currentBoard.getBorderCellList(playerNum).size()));
 			}
 		} else {
 			//random move generator
 			target = currentBoard.getCellList(EMPTY).get(
-				randNum.nextInt(
-					currentBoard.getCellList(EMPTY).size()));
+					randNum.nextInt(
+							currentBoard.getCellList(EMPTY).size()));
 		}
 			
 		nextMove.Col = target.col;
 		nextMove.Row = target.row;
-		addMoveToBoard(nextMove);
-		System.out.flush();
-		System.err.println("Board Evaluation: " + 
-				currentBoard.eval(playerNum, currentBoard.edges[playerNum]));
-		System.err.flush();
+		currentBoard.addMove(nextMove);
 		return nextMove;
 		
 		
@@ -209,8 +205,7 @@ public int getWinner() {
 			return INVALID;
 		}
 		//set the target cell as placed by the opponent 
-		
-		addMoveToBoard(m);
+		currentBoard.addMove(m);
 		opponentFirstMove = false;
 		return 0;
 	}
@@ -221,7 +216,11 @@ public int getWinner() {
 
 	}
 	public void addMoveToBoard(Move m){
-		
+
+		if(currentBoard.getCell(m.Row, m.Col).toString().equals( "Edge")){
+
+			edges[m.P][((Edge)currentBoard.getCell(m.Row, m.Col)).getEdgeNum()]= true;
+		}
 		currentBoard.addMove(m);
 	}
 

@@ -1,5 +1,7 @@
 package aiproj.fencemaster.avnishj;
 
+
+
 /** Super class for cells, which has attributes and
  * methods for a Center type cell
  */
@@ -143,6 +145,31 @@ public class Cell implements aiproj.fencemaster.Piece{
 		links[5] = parentBoard.getCell(row  , col-1);
 	}
 	
+	public int [] getEdgeDistances(){
+		int [] edgeD = new int [6];
+		
+		for (int i = 0 ; i < edgeD.length; i++){
+			edgeD[i] = getDistanceToEdge(i);
+		}
+		
+		return edgeD;
+	}
+	
+	public int getMinimumInEdgeList(){
+		int min = parentBoard.getDimension();
+		int [] list = getEdgeDistances();
+		
+		for (int i = 0; i < list.length; i++){
+			
+			if(list[i] < min){
+				min = list[i];
+			}
+			
+		}
+		
+		return min;
+	}
+	
 	public int getDistanceToEdge(int edgeNum){
 		switch(edgeNum){
 			case 0:
@@ -174,7 +201,7 @@ public class Cell implements aiproj.fencemaster.Piece{
 			}
 		}
 		if (count >= 2){
-			System.err.println("Cell " + this.row + "," + this.col + "joins two chains");
+			
 			return true;
 		}
 		else{

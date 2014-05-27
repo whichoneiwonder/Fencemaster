@@ -10,13 +10,14 @@ import aiproj.fencemaster.Move;
 public class GameBoard implements aiproj.fencemaster.Piece{
 	
 	private int dimension;
+	public final int SCALE = 5;
 	
 	//Board implementation as a 2-D Array
 	protected Cell [][] board;
 	protected ArrayList<Edge> edgeList;
 	protected ArrayList<ArrayList<Cell>> cellList;
 	protected ArrayList<ArrayList<Cell>> borderCellList;
-	
+	protected boolean edges[][];
 	/** Constructor which creates the GameBoard given the dimension n
 	 *  
 	 *  @param n = dimension of the board
@@ -35,19 +36,61 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		//Static ArrayList that assists with Tripod Searching
 		edgeList = new ArrayList<Edge>();
 		createGameBoard();
+		edges = new boolean[3][6];
+		for (boolean[] list: edges){
+			for(boolean item: list){
+				item = false;
+				if(item);
+			}
+		}
 		
 	}
 	
-//	public GameBoard(GameBoard parent, Move m){
-//		setDimension(parent.getDimension());
-//		board = Array.copyOf(parent.board);
-//		edgeList = (ArrayList<Edge>) parent.edgeList.clone();
-//
-//		cellList = (ArrayList<ArrayList<Cell>>) parent.cellList.clone();
-//		borderCellList = (ArrayList<ArrayList<Cell>>) parent.borderCellList.clone();
-//		
-//		this.addMoveToBoard(m);
-//	}
+	/**Copy constructor takes a previous board state and a move to create a child state
+	 * 
+	 * @param parent : theprevisous state of the board 
+	 * @param m the move to be added
+	 */
+	public GameBoard(GameBoard parent, Move m){
+		board = new Cell [parent.getBoard().length][parent.getBoard()[0].length];
+		if (parent.getBoard() != null){
+			for (int row = 0; row < parent.getBoard().length; row++){
+				for(int col = 0; col < parent.getBoard()[0].length; col++){
+					board[row][col] = new Cell(row,col,parent.getCellState(row,col),this);
+				}
+			}
+			
+			
+			edgeList = new ArrayList<Edge>();
+			for(Edge cell: parent.edgeList){
+				edgeList.add((Edge) getCell(cell.row,cell.col));
+			}
+			cellList = new ArrayList<ArrayList<Cell>>(3);
+			borderCellList = new ArrayList<ArrayList<Cell>>(3);
+			
+			for(int i =0; i < 3; i++){
+				cellList.add(i, new ArrayList<Cell>());
+				borderCellList.add(i, new ArrayList<Cell>());
+			}
+			
+			edges = new boolean[3][6];
+			int player;
+			int edgeNum;
+			for (player= 0; player < 3; player ++){
+				for (Cell cell: borderCellList.get(player)){
+					borderCellList.get(player).add(getCell(cell.row, cell.col));
+				}
+				for (Cell cell: cellList.get(player)){
+					cellList.get(player).add(getCell(cell.row, cell.col));
+				}
+
+				for(edgeNum = 0 ; edgeNum<6; edgeNum ++){
+					edges[player][edgeNum] = parent.edges[player][edgeNum];
+				}
+			}
+			addMove(m);	
+		}
+	}
 
 	/**
 	 * @return the dimension
@@ -89,7 +132,8 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 					}
 				}// end first row
 				
-				//Every other row in the top half of the board starts and ends with an edge
+				//Every other row in the top half of the board 
+				//starts and ends with an edge
 				// and has center pieces in the middle
 				else{
 					
@@ -127,7 +171,8 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		int row = getDimension() - 1;
 		//Starts and Ends the Row with 2 Corner Cells as it is the longest row
 		board [row] [0] = new Corner(row, 0, EMPTY, this, 5);
-		board [row] [2*getDimension() - 2] = new Corner(row, 2*getDimension() - 2, EMPTY, this, 2);
+		board [row] [2*getDimension() - 2] = 
+				new Corner(row, 2*getDimension() - 2, EMPTY, this, 2);
 		
 		//Rest are initialised as Center Cells
 		for (int col = 1; col < 2*getDimension() - 2; col++){
@@ -271,6 +316,9 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	 **/  
 	protected void setCellState(int x, int y, int state){
 		board[x][y].setState(state);
+	}
+	protected int getCellState(int x, int y){
+		return board[x][y].state;
 	}
 	
 	
@@ -586,12 +634,33 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	 * 
 	 * @param mv the move to be added to the board
 	 */
-	protected void addMoveToBoard(Move mv){
+	protected void addMove(Move mv){
+		Cell target = getCell(mv.Row, mv.Col);
+		if(mv.IsSwap){
+			//if it's a swap, remove the preciously added things
+			cellList.get(mv.P%2 +1).clear();
+			borderCellList.get(mv.P%2 +1).clear();
+			for (boolean[] edge: edges){
+				for( boolean marker: edge){
+					marker = false;
+					if(marker);
+				}
+			}
+		}
+		//update tracking arraylists
 		setCellState(mv.Row, mv.Col, mv.P);
-		cellList.get(EMPTY).remove(getCell(mv.Row, mv.Col));
-		borderCellList.get(WHITE).remove(getCell(mv.Row, mv.Col));
-		borderCellList.get(BLACK).remove(getCell(mv.Row, mv.Col));
-		cellList.get(mv.P).add(getCell(mv.Row, mv.Col));
+		
+		cellList.get(EMPTY).remove(target);
+		borderCellList.get(WHITE).remove(target);
+		borderCellList.get(BLACK).remove(target);
+		cellList.get(mv.P).add(target);
+		
+		
+		
+		
+		if (target.toString().equals("Edge")){
+			edges[mv.P][((Edge)target).getEdgeNum()]= true;
+		}
 		
 		//expand the border space of the moving player
 		for(Cell space: getCell(mv.Row, mv.Col).getAllLinks()){
@@ -621,12 +690,78 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		return null;
 	}
 	
+	protected Cell getSmallestCell(ArrayList<Cell> list, int edgeNum){
+		Cell minCell = list.get(0);
+		int min = minCell.getDistanceToEdge(edgeNum);
+		
+		for(int i = 1; i < list.size(); i++){
+			if (list.get(i).getDistanceToEdge(edgeNum) < min){
+				min = list.get(i).getDistanceToEdge(edgeNum);
+				minCell = list.get(i);
+			}
+		}
+		
+		return minCell;
+		
+	}
 	
-	protected double eval(int playerNum){
-		double returnVal = 0;
+	protected ArrayList<Cell> addToPriorityQueue(ArrayList<Cell> pq, Cell current, int edgeNum, int playerNum){
+		
+		int [] listingOrder = {edgeNum, (edgeNum+1)%6, (edgeNum+5)%6, (edgeNum+2)%6, 
+		                          (edgeNum+4)%6, (edgeNum+3)%6};
+		
+		for (int i = listingOrder.length - 1; i >= 0; i--){
+			Cell next = current.getLink(listingOrder[i]);
+			
+			if (next != null && next.getState() != ((playerNum%2)+1) && !pq.contains(next) ){
+				pq.add(0,next);
+			}
+		}
+		
+		return pq;
+	}
+	
+	protected double djikstra(int playerNum, int edgeNum){
+		
+	ArrayList<Cell> pq = new ArrayList<Cell>();
+
+		Cell smallest = getSmallestCell(this.getCellList(playerNum), edgeNum);
+		pq = addToPriorityQueue(pq, smallest, edgeNum, playerNum);
+		double counter = 1;
+		while(!pq.isEmpty() && counter <= SCALE * this.getDimension() ){
+			//checking first list
+			Cell check = pq.get(0);
+			if(check.toString().equals("Edge") && ((Edge)check).getEdgeNum()== edgeNum){
+				return counter;
+			}
+			else{
+				pq = addToPriorityQueue(pq, check, edgeNum, playerNum);
+				pq.remove(pq.indexOf(check));
+				counter++;
+			}
+		}
 		
 		
-		return returnVal;
+		return counter;
+		
+	}
+	protected double eval(int playerNum, boolean[] edges ){
+		double connectedEdges =0;
+		double [] heuristic = new double [6];
+		double min = Double.MAX_VALUE;
+		
+		for (int i = 0; i < heuristic.length; i++){
+			if (!edges[i]){
+				heuristic[i] = djikstra(playerNum, i);
+				
+				if ( heuristic[i] < min){
+					min = heuristic[i];
+				}
+			}else connectedEdges++;
+				
+		}
+		
+		return 100*connectedEdges + (100/min);
 	}
 
 }
