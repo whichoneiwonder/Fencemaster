@@ -162,5 +162,25 @@ public class Cell implements aiproj.fencemaster.Piece{
 		
 	}
 	
+	public boolean joinsTwoChains(int player){
+		int count = 0;
+		
+		for(int i = 0; i <6; i++){
+
+			if(links[i] != null && links[i].state == player &&
+					(links[(i+1)%6] == null || links[(i+1)%6].state != player )){
+				count++;
+				i++;
+			}
+		}
+		if (count >= 2){
+			System.err.println("Cell " + this.row + "," + this.col + "joins two chains");
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	
 }

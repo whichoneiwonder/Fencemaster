@@ -1,5 +1,6 @@
 package aiproj.fencemaster.avnishj;
 import java.io.PrintStream;
+
 import java.util.ArrayList;
 
 import aiproj.fencemaster.Move;
@@ -36,6 +37,17 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		createGameBoard();
 		
 	}
+	
+//	public GameBoard(GameBoard parent, Move m){
+//		setDimension(parent.getDimension());
+//		board = Array.copyOf(parent.board);
+//		edgeList = (ArrayList<Edge>) parent.edgeList.clone();
+//
+//		cellList = (ArrayList<ArrayList<Cell>>) parent.cellList.clone();
+//		borderCellList = (ArrayList<ArrayList<Cell>>) parent.borderCellList.clone();
+//		
+//		this.addMoveToBoard(m);
+//	}
 
 	/**
 	 * @return the dimension
@@ -609,8 +621,14 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		return null;
 	}
 	
+	
+	protected double eval(int playerNum){
+		double returnVal = 0;
+		
+		
+		return returnVal;
+	}
+
 }
-
-
 	
 

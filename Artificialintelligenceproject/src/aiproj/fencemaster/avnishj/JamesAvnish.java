@@ -16,6 +16,8 @@ public class JamesAvnish implements Player, Piece {
 	protected int playerNum;
 	protected int turnNum;
 	
+	protected boolean edges[][];
+	
 	Random randNum = new Random();
 	
 	@Override
@@ -24,8 +26,8 @@ public int getWinner() {
 		//Win Checking Booleans
 		boolean blackWins = false;
 		boolean whiteWins = false;
-		boolean tripod =false;
-		boolean loop =false;
+		boolean tripod = false;
+		boolean loop = false;
 		boolean blankSpotsOnBoard = currentBoard.checkForBlank();
 		
 		if (DEBUG)
@@ -135,45 +137,43 @@ public int getWinner() {
 
 	@Override
 	public Move makeMove() {
-		int row, col;
+		
 		Move nextMove = new Move();
 		Cell target;
 		
-		//random move generator
+		
 		
 		nextMove.IsSwap = false;
 		nextMove.P = this.playerNum;
 		
+		target = null;
 		
 		if(!currentBoard.getBorderCellList(playerNum).isEmpty() ){
+			for(Cell borderCell: currentBoard.getBorderCellList(playerNum)){
+				if(borderCell.joinsTwoChains(playerNum)){
+					target = borderCell;
+					break;
+				}
+			}
+			
+			if (target==null){
 			target = currentBoard.getBorderCellList(playerNum).get(
 					randNum.nextInt(
 							currentBoard.getBorderCellList(playerNum).size()));
-			nextMove.Col = target.col;
-			nextMove.Row = target.row;
-			currentBoard.addMoveToBoard(nextMove);
-			return nextMove;
+			}
+		} else {
+			//random move generator
+			target = currentBoard.getCellList(EMPTY).get(
+					randNum.nextInt(
+							currentBoard.getCellList(EMPTY).size()));
 		}
+			
+		nextMove.Col = target.col;
+		nextMove.Row = target.row;
+		currentBoard.addMoveToBoard(nextMove);
+		return nextMove;
 		
-		while(true){
-			row = randNum.nextInt(2* currentBoard.getDimension()-1);
-			col = randNum.nextInt(2* currentBoard.getDimension()-1) ;
-			
-			if(DEBUG){
-				System.out.println("Player" + playerNum +
-						" trying row " + row + " and col " + col);
-			}
-			
-			if((target =currentBoard.getCell(row, col)) != null ){
-				if (target.getState() == EMPTY){
-					nextMove.Col=col;
-					nextMove.Row = row;
-					//REMEMBER TO CHANGE OUR BOARD STATE
-					currentBoard.addMoveToBoard(nextMove);
-					return nextMove;
-				}
-			}
-		}
+		
 	}
 
 	@Override
@@ -214,6 +214,14 @@ public int getWinner() {
 	public void printBoard(PrintStream output) {
 		currentBoard.printBoard(output);
 
+	}
+	public void addMoveToBoard(Move m){
+
+		if(currentBoard.getCell(m.Row, m.Col).toString().equals( "Edge")){
+
+			edges[m.P][((Edge)currentBoard.getCell(m.Row, m.Col)).getEdgeNum()]= true;
+		}
+		currentBoard.addMoveToBoard(m);
 	}
 
 }
