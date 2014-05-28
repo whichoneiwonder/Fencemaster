@@ -772,7 +772,7 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 				
 		}
 		
-		return 200*connectedEdges + (100/min+1);
+		return 101*connectedEdges + (100/(min));
 	}
 
 }

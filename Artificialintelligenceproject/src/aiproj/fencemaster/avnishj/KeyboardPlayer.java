@@ -2,24 +2,22 @@ package aiproj.fencemaster.avnishj;
 
  
 import java.util.Random;
+import java.util.Scanner;
 import java.io.PrintStream;
 
 import aiproj.fencemaster.Move;
 import aiproj.fencemaster.Piece;
 import aiproj.fencemaster.Player;
 
-public class JamesAvnish implements Player, Piece {
+public class KeyboardPlayer implements Player, Piece {
 	
 	private static final boolean DEBUG = false;
 	protected boolean opponentFirstMove = true;
 	protected GameBoard currentBoard;
 	protected int playerNum;
-	protected int enemyNum;
 	protected int turnNum;
-	protected final int MAXDEPTH = 5;
-	
-	
-	protected Random randNum;
+	Scanner input = new Scanner (System.in);
+	Random randNum = new Random();
 	
 	@Override
 public int getWinner() {
@@ -27,8 +25,8 @@ public int getWinner() {
 		//Win Checking Booleans
 		boolean blackWins = false;
 		boolean whiteWins = false;
-		boolean tripod = false;
-		boolean loop = false;
+		boolean tripod =false;
+		boolean loop =false;
 		boolean blankSpotsOnBoard = currentBoard.checkForBlank();
 		
 		if (DEBUG)
@@ -131,9 +129,7 @@ public int getWinner() {
 	public int init(int n, int p) {
 		currentBoard = new GameBoard(n);
 		playerNum = p;
-		enemyNum = p%2+1;
 		turnNum = 1;
-		randNum = new Random();
 		
 		return 0;
 	}
@@ -142,50 +138,26 @@ public int getWinner() {
 	public Move makeMove() {
 		
 		Move nextMove = new Move();
-		turnNum++;
-		if(turnNum <3){
-			nextMove.IsSwap = false;
-			nextMove.P = playerNum;
-			if(currentBoard.getCellState(1, 1)== enemyNum){
-				nextMove.Col = 1;
-				nextMove.Row = currentBoard.getDimension()-1;
-				
-						
-			}else{
-				nextMove.Row=1;
-				nextMove.Col=1;
+		
+		
+		//random move generator
+		
+		nextMove.IsSwap = false;
+		nextMove.P = this.playerNum;
+		
+		while(true){
+			System.out.print("enter 'row' 'col': ");
+			nextMove.Row = input.nextInt();
+			nextMove.Col = input.nextInt();
+			if(currentBoard.getCell(nextMove.Row, nextMove.Col) != null &&
+					currentBoard.getCellState(nextMove.Row, nextMove.Col) == EMPTY){
+				return nextMove;
 			}
-			addMoveToBoard(nextMove);
-			return nextMove;
-		}
-		
-		nextMove = miniMax(MAXDEPTH);
-		
-		if(nextMove == null){
-			System.err.println("random move...");
-			nextMove = new Move();
-			nextMove.IsSwap = false;
-			nextMove.P = this.playerNum;
-			Cell target;
-			target = null;
-			target = currentBoard.getCellList(EMPTY).get(
-					randNum.nextInt(
-						currentBoard.getCellList(EMPTY).size()));
+			System.out.println("Error: make sure you're entering"
+					+ " the coordinares of a real cell");
 			
-				
-			nextMove.Col = target.col;
-			nextMove.Row = target.row;
 			
 		}
-			
-		addMoveToBoard(nextMove);
-		System.out.flush();
-		System.err.println("Board Evaluation: " + 
-				currentBoard.eval(playerNum));
-		System.err.flush();
-		return nextMove;
-		
-		
 	}
 
 	@Override
@@ -217,9 +189,7 @@ public int getWinner() {
 			return INVALID;
 		}
 		//set the target cell as placed by the opponent 
-		
-		turnNum++;
-		addMoveToBoard(m);
+		currentBoard.getCell(m.Row, m.Col).setState(m.P);
 		opponentFirstMove = false;
 		return 0;
 	}
@@ -229,93 +199,5 @@ public int getWinner() {
 		currentBoard.printBoard(output);
 
 	}
-	public void addMoveToBoard(Move m){
-		
-		currentBoard.addMove(m);
-	}
-
-	public Move miniMax(int depth){
-		double maxVal = Double.MIN_VALUE;
-		double minVal;
-		Move m;
-		Move bestMove = null;
-		
-		for(Cell target : currentBoard.borderCellList.get(playerNum)){
-			m = new Move(playerNum , false, target.row, target.col);
-			//System.out.println(m);
-			minVal =  minMove(new GameBoard(currentBoard, m), depth -1 );
-			//System.out.println("MinVal: " + minVal);
-			if (maxVal <= minVal){
-				maxVal = minVal;
-				bestMove = m;
-			}
-			
-		}
-		return bestMove;
-	}
-	
-	protected double minMove (GameBoard parentBoard, int depth){
-		
-		if(parentBoard.checkTripod(playerNum)|| parentBoard.checkLoop(playerNum)){
-			return Double.MAX_VALUE;
-		}
-		if (depth <=0 ){
-			double eval = parentBoard.eval(playerNum);
-			//System.out.println("MinMove() Eval at depth " + depth + " eval: " + eval);
-			return eval - parentBoard.eval(enemyNum);
-		}
-		
-		
-		double minVal = Double.MAX_VALUE;
-		double maxVal;
-		Move m;
-		for(Cell target : parentBoard.borderCellList.get(enemyNum)){
-			m = new Move(enemyNum , false, target.row, target.col);
-			if (minVal > (maxVal =  maxMove(new GameBoard(parentBoard, m),depth-1))){
-				minVal = maxVal;
-			}
-			
-			
-		}
-		return minVal;
-	}
-		
-		protected double maxMove (GameBoard parentBoard, int depth){
-			if(parentBoard.checkTripod(enemyNum) || parentBoard.checkLoop(enemyNum)){
-				return Double.MIN_VALUE;
-			}
-			
-			
-			if (depth <=0 ){
-				double eval = parentBoard.eval(playerNum);
-				//System.out.println("MaxMove() Eval at depth " + depth + " eval: " + eval);
-				return eval - parentBoard.eval(enemyNum);
-			}
-			
-			
-			double maxVal = Double.MIN_VALUE;
-			double minVal;
-			Move m;
-			for(Cell target : parentBoard.borderCellList.get(playerNum)){
-				m = new Move(playerNum , false, target.row, target.col);
-				minVal =  minMove(new GameBoard(parentBoard, m), depth -1 );
-				//System.out.println("MaxMove() MinVal: " + minVal);
-				if (maxVal > minVal){
-					maxVal = minVal;
-				}
-				
-			}
-		
-		
-		
-		return maxVal;
-		
-	}
-
-
-
-
-	
-
 
 }
