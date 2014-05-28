@@ -24,5 +24,15 @@ public class Move implements Piece {
 		Col = c;
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Move [P=" + P + ", IsSwap=" + IsSwap + ", Row=" + Row
+				+ ", Col=" + Col + "]";
+	}
+	
 	
 }

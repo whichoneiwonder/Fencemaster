@@ -14,11 +14,12 @@ public class JamesAvnish implements Player, Piece {
 	protected boolean opponentFirstMove = true;
 	protected GameBoard currentBoard;
 	protected int playerNum;
+	protected int enemyNum;
 	protected int turnNum;
+	protected final int MAXDEPTH= 5;
 	
 	
-	
-	Random randNum = new Random();
+	protected Random randNum;
 	
 	@Override
 public int getWinner() {
@@ -130,7 +131,9 @@ public int getWinner() {
 	public int init(int n, int p) {
 		currentBoard = new GameBoard(n);
 		playerNum = p;
+		enemyNum = p%2+1;
 		turnNum = 1;
+		randNum = new Random();
 		
 		return 0;
 	}
@@ -138,42 +141,32 @@ public int getWinner() {
 	@Override
 	public Move makeMove() {
 		
-		Move nextMove = new Move();
-		Cell target;
+		Move nextMove;
 		
 		
+		nextMove = miniMax(MAXDEPTH);
 		
-		nextMove.IsSwap = false;
-		nextMove.P = this.playerNum;
-		
-		target = null;
-		
-		if(!currentBoard.getBorderCellList(playerNum).isEmpty() ){
-			for(Cell borderCell: currentBoard.getBorderCellList(playerNum)){
-				if(borderCell.joinsTwoChains(playerNum)){
-					target = borderCell;
-					break;
-				}
-			}
-			
-			if (target==null){
-			target = currentBoard.getBorderCellList(playerNum).get(
-				randNum.nextInt(
-					currentBoard.getBorderCellList(playerNum).size()));
-			}
-		} else {
-			//random move generator
+		if(nextMove == null){
+			System.err.println("random move...");
+			nextMove = new Move();
+			nextMove.IsSwap = false;
+			nextMove.P = this.playerNum;
+			Cell target;
+			target = null;
 			target = currentBoard.getCellList(EMPTY).get(
-				randNum.nextInt(
-					currentBoard.getCellList(EMPTY).size()));
+					randNum.nextInt(
+						currentBoard.getCellList(EMPTY).size()));
+			
+				
+			nextMove.Col = target.col;
+			nextMove.Row = target.row;
+			
 		}
 			
-		nextMove.Col = target.col;
-		nextMove.Row = target.row;
 		addMoveToBoard(nextMove);
 		System.out.flush();
 		System.err.println("Board Evaluation: " + 
-				currentBoard.eval(playerNum, currentBoard.edges[playerNum]));
+				currentBoard.eval(playerNum));
 		System.err.flush();
 		return nextMove;
 		
@@ -224,5 +217,89 @@ public int getWinner() {
 		
 		currentBoard.addMove(m);
 	}
+
+	public Move miniMax(int depth){
+		double maxVal = Double.MIN_VALUE;
+		double minVal;
+		Move m;
+		Move bestMove = null;
+		
+		for(Cell target : currentBoard.borderCellList.get(playerNum)){
+			m = new Move(playerNum , false, target.row, target.col);
+			//System.out.println(m);
+			minVal =  minMove(new GameBoard(currentBoard, m), depth -1 );
+			//System.out.println("MinVal: " + minVal);
+			if (maxVal <= minVal){
+				maxVal = minVal;
+				bestMove = m;
+			}
+			
+		}
+		return bestMove;
+	}
+	
+	protected double minMove (GameBoard parentBoard, int depth){
+		
+		if(parentBoard.checkTripod(playerNum)|| parentBoard.checkLoop(playerNum)){
+			return Double.MAX_VALUE;
+		}
+		if (depth <=0 ){
+			double eval = parentBoard.eval(playerNum);
+			//System.out.println("MinMove() Eval at depth " + depth + " eval: " + eval);
+			return eval;
+		}
+		
+		
+		double minVal = Double.MAX_VALUE;
+		double maxVal;
+		Move m;
+		for(Cell target : parentBoard.borderCellList.get(enemyNum)){
+			m = new Move(enemyNum , false, target.row, target.col);
+			if (minVal > (maxVal =  maxMove(new GameBoard(parentBoard, m),depth-1))){
+				minVal = maxVal;
+			}
+			
+			
+		}
+		return minVal;
+	}
+		
+		protected double maxMove (GameBoard parentBoard, int depth){
+			if(parentBoard.checkTripod(enemyNum) || parentBoard.checkLoop(enemyNum)){
+				return Double.MIN_VALUE;
+			}
+			
+			
+			if (depth <=0 ){
+				double eval = parentBoard.eval(playerNum);
+				//System.out.println("MaxMove() Eval at depth " + depth + " eval: " + eval);
+				return eval;
+			}
+			
+			
+			double maxVal = Double.MIN_VALUE;
+			double minVal;
+			Move m;
+			for(Cell target : parentBoard.borderCellList.get(playerNum)){
+				m = new Move(playerNum , false, target.row, target.col);
+				minVal =  minMove(new GameBoard(parentBoard, m), depth -1 );
+				//System.out.println("MaxMove() MinVal: " + minVal);
+				if (maxVal > minVal){
+					maxVal = minVal;
+				}
+				
+			}
+		
+		
+		
+		return maxVal;
+		
+	}
+
+
+
+
+	
+
 
 }

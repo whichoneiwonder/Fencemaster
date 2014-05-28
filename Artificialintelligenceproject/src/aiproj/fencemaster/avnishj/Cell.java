@@ -37,7 +37,6 @@ public class Cell implements aiproj.fencemaster.Piece{
 		setState(state);
 		setParentBoard(parentBoard);
 		//add to the parent Board's list of empty Cells
-		getParentBoard().cellList.get(EMPTY).add(this);
 	}
 	
 

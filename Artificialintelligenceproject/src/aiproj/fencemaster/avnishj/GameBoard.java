@@ -10,7 +10,7 @@ import aiproj.fencemaster.Move;
 public class GameBoard implements aiproj.fencemaster.Piece{
 	
 	private int dimension;
-	public final int SCALE = 5;
+	public final int SCALE = 20;
 	
 	//Board implementation as a 2-D Array
 	protected Cell [][] board;
@@ -18,12 +18,14 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	protected ArrayList<ArrayList<Cell>> cellList;
 	protected ArrayList<ArrayList<Cell>> borderCellList;
 	protected boolean edges[][];
+	protected ArrayList<Move> previousMoves;
 	/** Constructor which creates the GameBoard given the dimension n
 	 *  
 	 *  @param n = dimension of the board
 	 *  			
 	 */
 	public GameBoard(int n){
+		previousMoves = new ArrayList<Move>();
 		cellList = new ArrayList<ArrayList<Cell>>(3);
 		borderCellList = new ArrayList<ArrayList<Cell>>(3);
 		for(int i =0; i < 3; i++){
@@ -42,6 +44,14 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 				item = false;
 				if(item);
 			}
+		
+		}
+		for(Cell[] row: board){
+			for (Cell cell : row){
+				if(cell != null){
+					cellList.get(EMPTY).add(cell);
+				}
+			}	
 		}
 		
 	}
@@ -52,44 +62,44 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	 * @param m the move to be added
 	 */
 	public GameBoard(GameBoard parent, Move m){
-		board = new Cell [parent.getBoard().length][parent.getBoard()[0].length];
-		if (parent.getBoard() != null){
-			for (int row = 0; row < parent.getBoard().length; row++){
-				for(int col = 0; col < parent.getBoard()[0].length; col++){
-					board[row][col] = new Cell(row,col,parent.getCellState(row,col),this);
-				}
-			}
-			
-			
-			edgeList = new ArrayList<Edge>();
-			for(Edge cell: parent.edgeList){
-				edgeList.add((Edge) getCell(cell.row,cell.col));
-			}
-			cellList = new ArrayList<ArrayList<Cell>>(3);
-			borderCellList = new ArrayList<ArrayList<Cell>>(3);
-			
-			for(int i =0; i < 3; i++){
-				cellList.add(i, new ArrayList<Cell>());
-				borderCellList.add(i, new ArrayList<Cell>());
-			}
-			
-			edges = new boolean[3][6];
-			int player;
-			int edgeNum;
-			for (player= 0; player < 3; player ++){
-				for (Cell cell: borderCellList.get(player)){
-					borderCellList.get(player).add(getCell(cell.row, cell.col));
-				}
-				for (Cell cell: cellList.get(player)){
-					cellList.get(player).add(getCell(cell.row, cell.col));
-				}
+		previousMoves = new ArrayList<Move>();
 
-				for(edgeNum = 0 ; edgeNum<6; edgeNum ++){
-					edges[player][edgeNum] = parent.edges[player][edgeNum];
-				}
-			}
-			addMove(m);	
+
+		cellList = new ArrayList<ArrayList<Cell>>(3);
+		borderCellList = new ArrayList<ArrayList<Cell>>(3);
+		for(int i =0; i < 3; i++){
+			cellList.add(i, new ArrayList<Cell>());
+			borderCellList.add(i, new ArrayList<Cell>());
 		}
+		
+		setDimension(parent.dimension);
+		board = new Cell [2*getDimension() - 1] [2*getDimension() - 1];
+		//Static ArrayList that assists with Tripod Searching
+		edgeList = new ArrayList<Edge>();
+		createGameBoard();
+		edges = new boolean[3][6];
+		for (boolean[] list: edges){
+			for(boolean item: list){
+				item = false;
+				if(item);
+			}
+		
+		}
+		
+		for(Move mv : parent.previousMoves){
+			addMove(mv);
+		}
+		
+		for(Cell[] row: board){
+			for (Cell cell : row){
+				if(cell != null){
+					cellList.get(EMPTY).add(cell);
+				}
+			}	
+		}
+		
+			addMove(m);	
+		
 	}
 
 	/**
@@ -635,6 +645,7 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 	 * @param mv the move to be added to the board
 	 */
 	protected void addMove(Move mv){
+		previousMoves.add(mv);
 		Cell target = getCell(mv.Row, mv.Col);
 		if(mv.IsSwap){
 			//if it's a swap, remove the preciously added things
@@ -745,13 +756,13 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 		return counter;
 		
 	}
-	protected double eval(int playerNum, boolean[] edges ){
+	protected double eval(int playerNum){
 		double connectedEdges =0;
 		double [] heuristic = new double [6];
 		double min = Double.MAX_VALUE;
 		
 		for (int i = 0; i < heuristic.length; i++){
-			if (!edges[i]){
+			if (!edges[playerNum][i]){
 				heuristic[i] = djikstra(playerNum, i);
 				
 				if ( heuristic[i] < min){
@@ -761,7 +772,7 @@ public class GameBoard implements aiproj.fencemaster.Piece{
 				
 		}
 		
-		return 100*connectedEdges + (100/min);
+		return 200*connectedEdges + (100/min+1);
 	}
 
 }
