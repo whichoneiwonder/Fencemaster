@@ -1,1 +1,0 @@
-Main-Class: <aiproj.fencemaster.avnishj.Game>

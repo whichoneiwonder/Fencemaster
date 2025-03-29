@@ -1,8 +1,8 @@
-package aiproj.fencemaster.avnishj;
+package com.whichoneiwonder.aiproj.fencemaster.avnishj;
 import java.util.Scanner;
 /** Main class for the Game
  */
-public class Game implements aiproj.fencemaster.Piece {
+public class Game implements com.whichoneiwonder.aiproj.fencemaster.Piece {
 	
 	private static boolean DEBUG = false;
 	

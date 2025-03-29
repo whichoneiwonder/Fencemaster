@@ -1,4 +1,4 @@
-package aiproj.fencemaster.avnishj;
+package com.whichoneiwonder.aiproj.fencemaster.avnishj;
 /** Class for the Corner Cell which is a sub-class
  * of Cell. Inherits all attributes and methods
  */

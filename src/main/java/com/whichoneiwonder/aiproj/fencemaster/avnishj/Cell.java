@@ -1,11 +1,11 @@
-package aiproj.fencemaster.avnishj;
+package com.whichoneiwonder.aiproj.fencemaster.avnishj;
 
 
 
 /** Super class for cells, which has attributes and
  * methods for a Center type cell
  */
-public class Cell implements aiproj.fencemaster.Piece{
+public class Cell implements com.whichoneiwonder.aiproj.fencemaster.Piece{
 	//Row Position on Board
 	protected int row;
 	
