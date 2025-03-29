@@ -1,13 +1,13 @@
-package aiproj.fencemaster.avnishj;
+package com.whichoneiwonder.aiproj.fencemaster.avnishj;
 import java.io.PrintStream;
 
 import java.util.ArrayList;
 
-import aiproj.fencemaster.Move;
+import com.whichoneiwonder.aiproj.fencemaster.Move;
 
 /** Main class for the GameBoard
  */
-public class GameBoard implements aiproj.fencemaster.Piece{
+public class GameBoard implements com.whichoneiwonder.aiproj.fencemaster.Piece{
 	
 	private int dimension;
 	public final int SCALE = 20;

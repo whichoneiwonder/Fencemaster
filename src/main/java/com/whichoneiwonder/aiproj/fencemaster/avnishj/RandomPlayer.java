@@ -1,12 +1,12 @@
-package aiproj.fencemaster.avnishj;
+package com.whichoneiwonder.aiproj.fencemaster.avnishj;
 
  
 import java.util.Random;
 import java.io.PrintStream;
 
-import aiproj.fencemaster.Move;
-import aiproj.fencemaster.Piece;
-import aiproj.fencemaster.Player;
+import com.whichoneiwonder.aiproj.fencemaster.Move;
+import com.whichoneiwonder.aiproj.fencemaster.Piece;
+import com.whichoneiwonder.aiproj.fencemaster.Player;
 
 public class RandomPlayer implements Player, Piece {
 	

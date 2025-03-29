@@ -1,4 +1,4 @@
-package aiproj.fencemaster;
+package com.whichoneiwonder.aiproj.fencemaster;
 
 
 /*   
@@ -35,7 +35,7 @@ public class Referee implements Piece{
 			P2 = (Player)(Class.forName(args[2]).getDeclaredConstructor().newInstance());
 		}
 		catch(Exception e){
-			System.out.println("Error "+ e.getMessage());
+			System.out.println("Error "+ e.getMessage() + " " + e.toString());
 			System.exit(1);
 		}
 

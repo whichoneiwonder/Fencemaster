@@ -1,4 +1,4 @@
-package aiproj.fencemaster;
+package com.whichoneiwonder.aiproj.fencemaster;
 /*
  *   Piece:
  *      Define types of pieces that can appear on a board

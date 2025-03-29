@@ -1,4 +1,4 @@
-package aiproj.fencemaster;
+package com.whichoneiwonder.aiproj.fencemaster;
 
 
 public class Move implements Piece {
