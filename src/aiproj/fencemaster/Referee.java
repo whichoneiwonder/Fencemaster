@@ -31,8 +31,8 @@ public class Referee implements Piece{
 		int checkinit=0;
 		System.out.println("Referee started !");
 		try{
-			P1 = (Player)(Class.forName(args[1]).newInstance());
-			P2 = (Player)(Class.forName(args[2]).newInstance());
+			P1 = (Player)(Class.forName(args[1]).getDeclaredConstructor().newInstance());
+			P2 = (Player)(Class.forName(args[2]).getDeclaredConstructor().newInstance());
 		}
 		catch(Exception e){
 			System.out.println("Error "+ e.getMessage());
